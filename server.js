@@ -11,11 +11,17 @@ const server = http.createServer(async (req,res)=>{
     res.writeHead(200, { 'Content-Type': 'application/json' })
 		res.end(JSON.stringify(todos))
   }
-  else if(req.url.match(/\/api\/products\/([0-9]+)/) && req.method === 'GET'){
-    const id = req.url.split('/')[3]
-    const todos = await Todos.findById(id)
-    res.writeHead(200, { 'Content-Type': 'application/json' })
-    res.end(JSON.stringify(todos))
+  else if(req.url.match(/\/api\/todos\/([a-z A-Z 0-9]+)/) && req.method === 'GET'){
+    try{
+      const id = req.url.split('/')[3]
+      const todos = await Todo.findById(id)
+      res.writeHead(200, { 'Content-Type': 'application/json' })
+      res.end(JSON.stringify(todos))
+    }
+    catch(error){
+			res.writeHead(404, { 'Content-Type': 'application/json' });
+			res.end(JSON.stringify({ message: error}));
+		}
   }
   else if(req.url === '/api/todos' && req.method === 'POST'){
 

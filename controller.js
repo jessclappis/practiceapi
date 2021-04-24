@@ -26,9 +26,9 @@ function findAll(){
 //find specific element
 function findById(id){
   return new Promise((resolve,reject)=> {
-    const todo = todos.find((p)=>p.oid===id)
+    const todo = todos.find((todo) => todo.id === id);
     if(todo){
-          resolve(todos)
+          resolve(todo)
     }
     else{
       reject('id '+id+' could not be found')
