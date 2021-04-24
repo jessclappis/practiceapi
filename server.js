@@ -23,14 +23,37 @@ const server = http.createServer(async (req,res)=>{
 			res.end(JSON.stringify({ message: error}));
 		}
   }
-  else if(req.url === '/api/todos' && req.method === 'POST'){
-
+  else if (req.url === '/api/todos' && req.method === 'POST') {
+		const body = await getPostData(req);
+		const { title, description } = JSON.parse(body);
+		const newTodo = await Todo.create({ title, description });
+		res.writeHead(201, { 'Content-Type': 'application/json' });
+		res.end(JSON.stringify(newTodo));
+	}
+  else if(req.url.match(/\/api\/todos\/([a-z A-Z 0-9]+)/) && req.method === 'PUT'){
+    try{
+      const body = await getPostData(req);
+      const id = req.url.split('/')[3]
+      const updatedTodo = await Todo.updateById(id, JSON.parse(body));
+			res.writeHead(200, { 'Content-Type': 'application/json' });
+			res.end(JSON.stringify(updatedTodo));
+		} catch (error) {
+			console.log(error);
+			res.writeHead(404, { 'Content-Type': 'application/json' });
+			res.end(JSON.stringify({ message: 'Todo not found!' }));
+		}
   }
-  else if(req.url.match(/\/api\/products\/([0-9]+)/) && req.method === 'PUT'){
-
-  }
-  else if(req.url.match(/\/api\/products\/([0-9]+)/) && req.method === 'DELETE'){
-
+  else if(req.url.match(/\/api\/todos\/([a-z A-Z 0-9]+)/) && req.method === 'DELETE'){
+    try{
+      const id = req.url.split('/')[3]
+      await Todo.deleteById(id)
+      res.writeHead(200, { 'Content-Type': 'application/json' })
+      res.end(JSON.stringify(todos))
+    }
+    catch(error){
+      res.writeHead(404, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ message: error}));
+    }
   }
   else {
   res.writeHead(404,{'Content-Type' : 'application/json'})

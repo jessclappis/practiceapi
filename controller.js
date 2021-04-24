@@ -1,4 +1,4 @@
-const todos = require('./data');
+todos = require('./data');
 
 /*const findAll = () => {
 	return new Promise((resolve, reject) => {
@@ -71,10 +71,15 @@ function deleteById(id){
 //create new todo
 function create(todo){
   return new Promise((resolve,reject)=>{
-    const newTodo = {id:Date.now().toString(), ...todo}
-    todos.push(newTodo)
-    writeDataToFile('data.js',todos)
-    resolve(todos)
+    const newTodo = {
+			id : Date.now().toString(),
+			...todo
+		};
+		todos = [
+			newTodo,
+			...todos
+		];
+		resolve(newTodo);
   })
 }
 
@@ -105,13 +110,31 @@ function create(todo){
 	}
 };*/
 //update data
-function updateById(id, todo){
-  return new Promise((resolve,reject)=>{
-    const index = todos.findIndex((p)=>p.oid===id)
-    todos[index] = {id,...todo}
-    writeDataToFile('data.js',todos)
-    resolve(todos)
-  })
+async function updateById(id, body){
+  try {
+		const { title, description } = body;
+		const todo = await findById(id);
+		if (!todo) {
+			res.writeHead(404, { 'Content-Type': 'application/json' });
+			res.end(JSON.stringify({ message: 'Todo not found!' }));
+		}
+		return new Promise((resolve, reject) => {
+			const updatedTodo = {
+				id,
+				title       :
+					title ? title :
+					todo.title,
+				description :
+					description ? description :
+					todo.description
+			};
+			const index = todos.findIndex((todo) => todo.id === id);
+			todos[index] = updatedTodo;
+			resolve(updatedTodo);
+		});
+	} catch (error) {
+		console.log(error);
+	}
 }
 
 module.exports = {
