@@ -1,3 +1,4 @@
+//this is sotrage object
 const todos = [
 	{
 		id          : '1',

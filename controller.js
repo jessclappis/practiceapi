@@ -1,4 +1,5 @@
-todos = require('./data');
+const todos = require('./data')
+const fs = require('fs')
 
 /*const findAll = () => {
 	return new Promise((resolve, reject) => {
@@ -48,10 +49,11 @@ function findById(id){
 };*/
 //delete specific element
 function deleteById(id){
-  return new Promise((resolve,reject)=>{
-    todosRemove = todos.filter((p)=>p.oid !==id)
-    writeDataToFile('data.js',todosRemove)
-    resolve()
+  return new Promise((resolve, reject) => {
+    const newTodos = todos.filter((todo) => todo.id !== id)
+    const index = todos.findIndex((todo) => todo.id === id);
+		todos.splice(index,1)
+		resolve({ message: 'Todo deleted successfully!!' })
   })
 }
 
@@ -75,10 +77,7 @@ function create(todo){
 			id : Date.now().toString(),
 			...todo
 		};
-		todos = [
-			newTodo,
-			...todos
-		];
+		todos.push(newTodo)
 		resolve(newTodo);
   })
 }

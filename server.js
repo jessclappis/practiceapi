@@ -46,13 +46,14 @@ const server = http.createServer(async (req,res)=>{
   else if(req.url.match(/\/api\/todos\/([a-z A-Z 0-9]+)/) && req.method === 'DELETE'){
     try{
       const id = req.url.split('/')[3]
-      await Todo.deleteById(id)
+      const remove = await Todo.deleteById(id)
       res.writeHead(200, { 'Content-Type': 'application/json' })
-      res.end(JSON.stringify(todos))
+      res.end(JSON.stringify(remove))
     }
     catch(error){
+      console.log(error);
       res.writeHead(404, { 'Content-Type': 'application/json' });
-      res.end(JSON.stringify({ message: error}));
+      res.end(JSON.stringify({ message: 'Could not remove'}));
     }
   }
   else {
@@ -61,5 +62,5 @@ const server = http.createServer(async (req,res)=>{
   }
 })
 
-const PORT = process.env.PORT || 500
+const PORT = process.env.PORT || 8282
 server.listen(PORT, () => console.log('Server listening on '+PORT))
